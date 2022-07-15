@@ -13,39 +13,29 @@ int Input(char *);
 void parse_String(char *, char **);
 void execute(char **);
 
-// Prints out an array
-void printArray(char **array) {
-    printf("From printArray: \n");
-    printf("\ncmd: %s", array[0]);
-    printf("\narg1: %s", array[1]);
-    printf("\narg2: %s\n", array[2]);
-}
-
+// Main
 int main(void) {
     // Main loop
     char *arguments[LISTMAXSIZE];
     char input[BUFFER];
     int input_value;
     while (1) {
+        alarm(15);
         if ((input_value = Input(input)) == 0) {
-            return 0;
+            break;
         }
-        
+        alarm(0);
         // parsing command for execution
-        ////// ERRROORR
         parse_String(input, arguments);
-        printf("cmd: %s", arguments[0]);
-        
-        printf("\narg1: %s", arguments[1]);
-        char *string[80] = {"ls", "shello"};
-        printArray(string);
-        ////// ERRROORR
+
         // Executing commands
         execute(arguments);
         
         // Clearing commands and arguments for new run.
         memset(arguments, 0, sizeof(arguments));
+
     }
+    return 0;
 }
 // Function for reading input
 int Input(char *line) {
@@ -63,18 +53,15 @@ int Input(char *line) {
         return 1;
     }
 }
-// Parses commands into a char array
+// Parses commands into a given char array
 void parse_String(char *string, char **arguments) {
     int i = 0;
-    char copy[BUFFER];
-    strcpy(copy, string);
-    char space_separator[] = " ";
-    char *ptr = strtok(copy, space_separator);
-    
-    while (ptr != NULL) {
-        arguments[i] = ptr;
-        ptr = strtok(NULL, space_separator);
-        i ++;
+    while (1) {
+        arguments[i] = strsep(&string, " ");
+        if (arguments[i] == NULL) {
+            break;
+        }
+        i++;
     }
 }
 
@@ -83,7 +70,6 @@ void execute(char **arguments) {
     // Forking a child process
     pid_t p1;
     p1 = fork();
-    printf("'%s'", arguments[0]);
     if (p1 == -1) {
         printf("Forking failed");
         return;
