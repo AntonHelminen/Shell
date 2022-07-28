@@ -1,0 +1,7 @@
+ls -l
+ls
+mkdir test_directory
+cd test_directory
+touch test_file.txt
+ls
+exit nms
